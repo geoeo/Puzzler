@@ -1,11 +1,9 @@
 use crate::ecs::components::position::Position;
 use crate::model::commands::MoveCommand;
-use crate::ecs::systems::commandable::Commandable;
-use crate::ecs::components::command::{CommandType, NoCommand, SimpleCommand};
 
 pub trait Movable {
     fn apply_delta(position: &Position, delta_x: i16, delta_y: i16) -> Position;
-    fn apply_move_on_all(controllable: &mut Vec<Position>, command_types: &Vec<CommandType>, move_command: &MoveCommand) -> ();
+    fn apply_move_on_all(controllable: &mut Vec<Position>, move_command: &MoveCommand) -> ();
 }
 
 impl Movable for Position {
@@ -17,18 +15,15 @@ impl Movable for Position {
 
         Position {
             x_pos:x_new as u16,
-            y_pos:y_new as u16
+            y_pos:y_new as u16,
+            input_delegate: position.input_delegate
         }
     }
 
-    fn apply_move_on_all(controllable: &mut Vec<Position>, command_types: &Vec<CommandType>, move_command: &MoveCommand) -> () {
+    fn apply_move_on_all(controllable: &mut Vec<Position>, move_command: &MoveCommand) -> () {
         for i in 0..controllable.len() {
             let old_pos = controllable[i];
-            let command_type = command_types[i];
-            let(delta_x,delta_y) = match command_type {
-                CommandType::NoCommand => NoCommand::apply_commmand(move_command),
-                CommandType::SimpleCommand => SimpleCommand::apply_commmand(move_command)
-            };
+            let (delta_x, delta_y) = (old_pos.input_delegate)(&move_command);
             let new_pos = Position::apply_delta(&old_pos,delta_x,delta_y);
             controllable[i] = new_pos;
         }

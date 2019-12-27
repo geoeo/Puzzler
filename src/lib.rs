@@ -49,7 +49,7 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
                 let (game_state_new, input_command_new) = KeyboardInput::parse_input_event(&read);
                 game_state = game_state_new;
                 let move_command = KeyboardInput::process_input(&input_command_new);
-                Position::apply_move_on_all(&mut level.movable, &level.command_types, &move_command);
+                Position::apply_move_on_all(&mut level.positions, &move_command);
 
                 input_game_command(output, &input_command_new)?;
             }
