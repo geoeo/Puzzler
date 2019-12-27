@@ -3,7 +3,7 @@ use super::model::commands::InputCommand;
 
 use crossterm::{queue, style, Result, cursor};
 use std::io::Write;
-use crate::ecs::components::display::{Display, ERROR_ICON};
+use crate::ecs::components::display::{Display, ERROR_ICON, DEFAULT_ICON};
 use crate::ecs::components::position::Position;
 
 pub fn generate_boundaries(world: &Level) -> (String, String) {
@@ -59,14 +59,27 @@ pub fn draw_world<W>(output: &mut W, level: &Level) ->  Result<()> where W: Writ
         for y in 0..level.height {
             let x_term_pos = x as u16 +x_offset;
             let y_term_pos = y as u16 +y_offset;
-            let display = level.map.get(y as usize,x as usize);
-            match display {
-                Some(display) =>
-                    queue!(
-                    output,
-                    cursor::MoveTo(x_term_pos, y_term_pos),
-                    style::Print(display.icon),
-                    ),
+            let element = level.map.get(y as usize,x as usize);
+            match element {
+                Some(option_id) => {
+                    match option_id {
+                        Some(id) => {
+                            let identifier = level.identifiers[*id as usize].clone().unwrap();
+                            queue!(
+                                    output,
+                                    cursor::MoveTo(x_term_pos, y_term_pos),
+                                    style::Print(identifier.display),
+                                    )
+
+                        },
+                        None =>  queue!(
+                                    output,
+                                    cursor::MoveTo(x_term_pos, y_term_pos),
+                                    style::Print(DEFAULT_ICON),
+                                    )
+                    }
+                },
+
                 None => queue!(
                     output,
                     cursor::MoveTo(x_term_pos, y_term_pos),
@@ -87,7 +100,7 @@ pub fn draw_display<W>(output: &mut W, display: &Display, position: &Position)->
     queue!(output,cursor::MoveTo(position.x_pos, position.y_pos), style::Print(format!("{:}",display.icon)))
 }
 
-pub fn input_game_command<W>(output: &mut W, command: &InputCommand) -> Result<()> where W: Write {
+pub fn draw_input_command<W>(output: &mut W, command: &InputCommand) -> Result<()> where W: Write {
     queue!(output, style::Print(format!("{:?}",command.key_event)), cursor::MoveRight(1))
 }
 

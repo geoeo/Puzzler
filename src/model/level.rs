@@ -1,7 +1,6 @@
 use crate::ecs::components::{
     identifier::Identifier,
     position::Position,
-    display::Display,
     occupancy::Occupancy};
 use array2d::Array2D;
 
@@ -13,10 +12,10 @@ const ENTITY_CAPACITY : usize = 50;
 pub struct Level {
     pub width : usize,
     pub height: usize,
-    pub map: Array2D<Display>, // Needs display and id
-    pub occupancies: Vec<Occupancy>, //TODO: might remove
-    pub identifiers: Vec<Identifier>,
-    pub positions: Vec<Position>
+    pub map: Array2D<Option<u64>>,
+    pub occupancies: Vec<Occupancy>,
+    pub identifiers: Vec<Option<Identifier>>,
+    pub positions: Vec<Option<Position>>
 }
 
 impl Level {
@@ -26,9 +25,9 @@ impl Level {
             width: width,
             height: height,
             occupancies: vec![Occupancy::new(); ENTITY_CAPACITY],
-            map: Array2D::filled_with(Display::new('.'),height,width),
-            identifiers: Vec::with_capacity(ENTITY_CAPACITY),
-            positions: Vec::with_capacity(ENTITY_CAPACITY)
+            map: Array2D::filled_with(None,height,width),
+            identifiers: vec![None;ENTITY_CAPACITY],
+            positions: vec![None;ENTITY_CAPACITY]
         }
 
     }
@@ -43,6 +42,10 @@ impl Level {
         };
 
         id_option
+    }
+
+    pub fn update_map(&self)->(){
+        //TODO:
     }
 
 }
