@@ -8,7 +8,7 @@ use crate::model::game_state::GameState;
 
 impl Input for KeyboardInput {
     // encapsulate this in an object with different traits depending on input type
-    fn process_input(&self, game_command: &InputCommand) -> MoveCommand {
+    fn process_input(game_command: &InputCommand) -> MoveCommand {
         if game_command.valid {
             match game_command.key_event.code {
                 KeyCode::Left => MoveCommand::Left,
@@ -26,7 +26,7 @@ impl Input for KeyboardInput {
         }
     }
 
-    fn parse_input_event(&self, event: &Event) -> (GameState, InputCommand) {
+    fn parse_input_event(event: &Event) -> (GameState, InputCommand) {
 
         match event {
             Event::Key(keyboard) => {

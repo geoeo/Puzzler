@@ -87,7 +87,7 @@ pub fn draw_display<W>(output: &mut W, display: &Display, position: &Position)->
     queue!(output,cursor::MoveTo(position.x_pos, position.y_pos), style::Print(format!("{:}",display.icon)))
 }
 
-pub fn draw_game_command<W>(output: &mut W, command: &InputCommand) -> Result<()> where W: Write {
+pub fn input_game_command<W>(output: &mut W, command: &InputCommand) -> Result<()> where W: Write {
     queue!(output, style::Print(format!("{:?}",command.key_event)), cursor::MoveRight(1))
 }
 

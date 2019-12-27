@@ -6,6 +6,6 @@ use crate::model::game_state::GameState;
 pub mod keyboard_input;
 
 pub trait Input {
-    fn process_input(&self, game_command: &InputCommand) -> MoveCommand;
-    fn parse_input_event(&self, event: &Event) -> (GameState, InputCommand);
+    fn process_input(game_command: &InputCommand) -> MoveCommand;
+    fn parse_input_event(event: &Event) -> (GameState, InputCommand);
 }
