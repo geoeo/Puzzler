@@ -1,11 +1,21 @@
-use crossterm::event::Event;
-
-use crate::model::commands::{InputCommand, MoveCommand};
+use crossterm::{
+    event::{Event, KeyCode, KeyEvent, KeyModifiers}
+};
 use crate::model::game_state::GameState;
+use crate::model::commands::InputCommand;
 
 pub mod keyboard_input;
 
-pub trait Input {
-    fn process_input(game_command: &InputCommand) -> MoveCommand;
-    fn parse_input_event(event: &Event) -> (GameState, InputCommand);
+pub fn parse_input_event(event: &Event) -> (GameState, InputCommand) {
+
+    match event {
+        Event::Key(keyboard) => {
+            (match keyboard.code {
+                KeyCode::Esc => GameState::QuitGame,
+                _ => GameState::Running
+            }, InputCommand {valid: true, key_event: keyboard.clone()})
+        },
+        _ => (GameState::Running, InputCommand {valid: false, key_event: KeyEvent{code: KeyCode::Esc, modifiers: KeyModifiers::empty()}})
+    }
+
 }

@@ -8,10 +8,10 @@ use crate::ecs::components::display::Display;
 
 pub mod constants;
 
-pub fn generate_boundaries(world: &Level) -> (String, String) {
-    let boundary_width = world.width+2;
-    let full_boundary = vec!['#'; boundary_width].iter().collect::<String>();
-    let mut partial_boundary_vec = vec![' '; boundary_width];
+pub fn generate_boundaries(level: &Level) -> (String, String) {
+    let boundary_width = level.width as usize+2;
+    let full_boundary = vec!['#'; boundary_width as usize].iter().collect::<String>();
+    let mut partial_boundary_vec = vec![' '; boundary_width as usize];
     partial_boundary_vec[0] = '#';
     partial_boundary_vec[(boundary_width-1)] = '#';
     let partial_boundary = partial_boundary_vec.iter().collect::<String>();
@@ -19,7 +19,7 @@ pub fn generate_boundaries(world: &Level) -> (String, String) {
 
     let mut world_string = String::new();
     world_string.push_str(&full_boundary);
-    for _ in 0..world.height {
+    for _ in 0..level.height {
         world_string.push_str(&partial_boundary);
     }
     world_string.push_str(&full_boundary);
@@ -29,7 +29,7 @@ pub fn generate_boundaries(world: &Level) -> (String, String) {
 }
 
 
-pub fn draw_boundary<W>(output: &mut W, level_height: usize, full_boundary: &str, partial_boundary: &str) -> Result<()> where W: Write {
+pub fn draw_boundary<W>(output: &mut W, level_height: u16, full_boundary: &str, partial_boundary: &str) -> Result<()> where W: Write {
 
     queue!(
             output,

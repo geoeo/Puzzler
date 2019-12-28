@@ -1,8 +1,6 @@
 use crate::model::game_state::GameState;
 use crate::model::level::Level;
 use crate::view::{generate_boundaries, draw_boundary, draw_input_command, draw_world};
-use crate::ecs::systems::input::Input;
-use crate::ecs::components::keyboard_input::KeyboardInput;
 
 use std::{
     time::Duration,
@@ -17,7 +15,7 @@ use crossterm::{
 };
 use std::io::Write;
 use crate::ecs::components::position::Position;
-use crate::ecs::systems::movable::Movable;
+use crate::ecs::systems::{movable::Movable,input::{parse_input_event,keyboard_input}};
 
 pub mod view;
 pub mod model;
@@ -44,10 +42,10 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
         match poll(Duration::from_millis(1000)) {
             Ok(true) => {
                 let read = read()?;
-                let (game_state_new, input_command_new) = KeyboardInput::parse_input_event(&read);
+                let (game_state_new, input_command_new) = parse_input_event(&read);
                 game_state = game_state_new;
-                let move_command = KeyboardInput::process_input(&input_command_new);
-                Position::apply_move_on_all(&mut level.positions, &move_command);
+                let move_command = keyboard_input::process_input(&input_command_new);
+                Position::apply_move_on_all(&mut level.positions,&level.inputs,level.width, level.height, &move_command);
                 level.update_map();
 
 
@@ -57,7 +55,6 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
             }
 
             Ok(false) => {
-                //draw_world(output, world, &full, &partial)?;
                 queue!(output, style::Print("no input detected"), cursor::MoveToNextLine(1))?;
             }
 

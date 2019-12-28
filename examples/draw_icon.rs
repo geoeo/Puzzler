@@ -2,7 +2,6 @@ use puzzler::run;
 
 use puzzler::model::level::Level;
 use puzzler::ecs::components::position::Position;
-use puzzler::ecs::systems::commands::no_command;
 use puzzler::ecs::components::display::Display;
 use puzzler::ecs::components::debug_information::DebugInformation;
 
@@ -12,8 +11,7 @@ fn main() {
     let mut level = Level::new(10, 10);
     let pos = Position {
         x_pos: 1,
-        y_pos: 4,
-        input_delegate: no_command
+        y_pos: 4
     };
     let id = Display {
         icon: 'c'
