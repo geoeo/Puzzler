@@ -41,6 +41,7 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
 
         match poll(Duration::from_millis(1000)) {
             Ok(true) => {
+                level.clear_map();
                 let read = read()?;
                 let (game_state_new, input_command_new) = parse_input_event(&read);
                 game_state = game_state_new;

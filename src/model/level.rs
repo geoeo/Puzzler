@@ -50,6 +50,16 @@ impl Level {
         id_option
     }
 
+    pub fn clear_map(&mut self)->() {
+        for x in 0..self.width {
+            for y in 0..self.height {
+                self.map.set(y as usize, x as usize, None).unwrap_or_else(|e| {
+                    panic!("Clear map failed with error: {:?}", e);
+                })
+            }
+        }
+    }
+
     pub fn update_map(&mut self) -> () {
         for i in 0..self.positions.len() {
             match self.positions[i] {
