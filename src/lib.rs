@@ -25,6 +25,7 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
 
     // encapsulate this better
     let (full,partial) = generate_boundaries(&level);
+    level.update_map();
     let mut game_state = GameState::Running;
 
     execute!(output, terminal::EnterAlternateScreen)?;
@@ -56,6 +57,8 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
             }
 
             Ok(false) => {
+                draw_boundary(output, level.height, &full, &partial)?;
+                draw_world(output, level)?;
                 queue!(output, style::Print("no input detected"), cursor::MoveToNextLine(1))?;
             }
 
