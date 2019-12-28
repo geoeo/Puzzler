@@ -1,5 +1,5 @@
 use crate::ecs::components::{
-    identifier::Identifier,
+    display::Display,
     position::Position,
     occupancy::Occupancy};
 use array2d::Array2D;
@@ -14,7 +14,7 @@ pub struct Level {
     pub height: usize,
     pub map: Array2D<Option<u64>>,
     pub occupancies: Vec<Occupancy>,
-    pub identifiers: Vec<Option<Identifier>>,
+    pub identifiers: Vec<Option<Display>>,
     pub positions: Vec<Option<Position>>
 }
 

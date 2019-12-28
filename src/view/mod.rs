@@ -3,8 +3,10 @@ use super::model::commands::InputCommand;
 
 use crossterm::{queue, style, Result, cursor};
 use std::io::Write;
-use crate::ecs::components::display::{Display, ERROR_ICON, DEFAULT_ICON};
 use crate::ecs::components::position::Position;
+use crate::ecs::components::display::Display;
+
+pub mod constants;
 
 pub fn generate_boundaries(world: &Level) -> (String, String) {
     let boundary_width = world.width+2;
@@ -64,18 +66,18 @@ pub fn draw_world<W>(output: &mut W, level: &Level) ->  Result<()> where W: Writ
                 Some(option_id) => {
                     match option_id {
                         Some(id) => {
-                            let identifier = level.identifiers[*id as usize].clone().unwrap();
+                            let display = level.identifiers[*id as usize].unwrap();
                             queue!(
                                     output,
                                     cursor::MoveTo(x_term_pos, y_term_pos),
-                                    style::Print(identifier.display),
+                                    style::Print(display.icon),
                                     )
 
                         },
                         None =>  queue!(
                                     output,
                                     cursor::MoveTo(x_term_pos, y_term_pos),
-                                    style::Print(DEFAULT_ICON),
+                                    style::Print(constants::DEFAULT_ICON),
                                     )
                     }
                 },
@@ -83,7 +85,7 @@ pub fn draw_world<W>(output: &mut W, level: &Level) ->  Result<()> where W: Writ
                 None => queue!(
                     output,
                     cursor::MoveTo(x_term_pos, y_term_pos),
-                    style::Print(ERROR_ICON),
+                    style::Print(constants::ERROR_ICON),
                     )
             }?
 
@@ -96,7 +98,7 @@ pub fn draw_world<W>(output: &mut W, level: &Level) ->  Result<()> where W: Writ
     )
 }
 
-pub fn draw_display<W>(output: &mut W, display: &Display, position: &Position)->Result<()> where W: Write {
+pub fn draw_display<W>(output: &mut W, display: &Display, position: &Position) ->Result<()> where W: Write {
     queue!(output,cursor::MoveTo(position.x_pos, position.y_pos), style::Print(format!("{:}",display.icon)))
 }
 
