@@ -52,6 +52,7 @@ pub fn draw_boundary<W>(output: &mut W, level_height: usize, full_boundary: &str
         )
 }
 
+//TODO: maybe map should only hold (id,char)
 pub fn draw_world<W>(output: &mut W, level: &Level) ->  Result<()> where W: Write {
 
     let x_offset: u16 = 1;
