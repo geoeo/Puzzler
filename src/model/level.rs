@@ -16,7 +16,7 @@ pub struct Level {
     pub height: u16,
     pub map: Array2D<Option<u64>>,
     pub occupancies: Vec<Occupancy>,
-    pub identifiers: Vec<Option<Display>>,
+    pub display: Vec<Option<Display>>,
     pub positions: Vec<Option<Position>>,
     pub debug: Vec<Option<DebugInformation>>,
     pub inputs: Vec<Option<Input>>
@@ -30,7 +30,7 @@ impl Level {
             height: height,
             occupancies: vec![Occupancy::new(); ENTITY_CAPACITY],
             map: Array2D::filled_with(None,height as usize,width as usize),
-            identifiers: vec![None;ENTITY_CAPACITY],
+            display: vec![None; ENTITY_CAPACITY],
             positions: vec![None;ENTITY_CAPACITY],
             debug: vec![None;ENTITY_CAPACITY],
             inputs: vec![None;ENTITY_CAPACITY]
@@ -70,9 +70,54 @@ impl Level {
                 None => continue
             }
         };
-
-
     }
+
+
+    pub fn add_position(&mut self, display: Display, position: Position, debug: DebugInformation) -> bool {
+        let available_id = self.available_id();
+        match available_id {
+            Some(id) => {
+                self.positions[id] = Some(position);
+                self.display[id] = Some(display);
+                self.debug[id] = Some(debug.clone());
+                self.occupancies[id] = Occupancy {position: true, display: true, input:false, debug: true};
+                true
+            },
+            None => false
+        }
+    }
+
+    pub fn add_position_input(&mut self, display: Display, position: Position,input: Input, debug: DebugInformation) -> bool {
+        let available_id = self.available_id();
+        match available_id {
+            Some(id) => {
+                self.positions[id] = Some(position);
+                self.display[id] = Some(display);
+                self.debug[id] = Some(debug);
+                self.inputs[id] = Some(input);
+                self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true};
+                true
+            },
+            None => false
+        }
+    }
+
+    pub fn delete(&mut self, id: usize) -> bool {
+        match id {
+            id if id > self.occupancies.capacity() => false,
+            id => {
+                self.positions[id] = None;
+                self.display[id] = None;
+                self.inputs[id] = None;
+                self.debug[id] = None;
+                self.occupancies[id] = Occupancy::new();
+                true
+            }
+
+        }
+    }
+
+
 
 }
 

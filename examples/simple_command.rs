@@ -15,7 +15,7 @@ fn main() {
         x_pos: 1,
         y_pos: 4
     };
-    let id = Display {
+    let disp = Display {
         icon: 'c'
     };
     let debug = DebugInformation {
@@ -25,10 +25,8 @@ fn main() {
         keyboard_delegate: simple_command
     };
 
-    level.positions.push(Some(pos));
-    level.identifiers.push(Some(id));
-    level.debug.push(Some(debug));
-    level.inputs.push(Some(simple_input));
+    let succ = level.add_position_input(disp,pos,simple_input,debug);
+    assert!(succ);
 
     match run(&mut stdout, &mut level) {
         Err(e) => panic!(e),

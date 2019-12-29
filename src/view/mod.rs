@@ -67,7 +67,7 @@ pub fn draw_world<W>(output: &mut W, level: &Level) ->  Result<()> where W: Writ
                 Some(option_id) => {
                     match option_id {
                         Some(id) => {
-                            let display = level.identifiers[*id as usize].unwrap();
+                            let display = level.display[*id as usize].unwrap();
                             queue!(
                                     output,
                                     cursor::MoveTo(x_term_pos, y_term_pos),

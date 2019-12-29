@@ -1,22 +1,22 @@
 #[derive(Debug,Copy,Clone)]
 pub struct Occupancy {
-    display: bool,
-    position: bool,
-    keyboard_input:bool,
-    identifier: bool
+    pub display: bool,
+    pub position: bool,
+    pub input:bool,
+    pub debug: bool
 }
 
 impl Occupancy {
     pub fn is_free(&self) -> bool {
-        !(self.display || self.position || self.keyboard_input || self.identifier)
+        !(self.display || self.position || self.input || self.debug)
     }
 
     pub fn new() -> Occupancy {
         Occupancy {
             display: false,
             position: false,
-            keyboard_input: false,
-            identifier: false
+            input: false,
+            debug: false
         }
     }
 }

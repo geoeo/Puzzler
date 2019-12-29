@@ -21,7 +21,7 @@ fn main() {
     };
 
     level.positions.push(Some(pos));
-    level.identifiers.push(Some(id));
+    level.display.push(Some(id));
     level.debug.push(Some(debug));
 
     match run(&mut stdout, &mut level) {
