@@ -3,7 +3,7 @@ use puzzler::run;
 use puzzler::model::level::Level;
 use puzzler::ecs::components::position::Position;
 use puzzler::ecs::components::display::Display;
-use puzzler::ecs::components::debug_information::DebugInformation;
+use puzzler::ecs::components::debug_information::Debug;
 
 fn main() {
     let mut stdout = std::io::stdout();
@@ -16,7 +16,7 @@ fn main() {
     let id = Display {
         icon: 'c'
     };
-    let debug = DebugInformation {
+    let debug = Debug {
         name: String::from("debug_name")
     };
 

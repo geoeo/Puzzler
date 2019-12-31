@@ -3,8 +3,7 @@ use super::model::commands::InputCommand;
 
 use crossterm::{queue, style, Result, cursor};
 use std::io::Write;
-use crate::ecs::components::position::Position;
-use crate::ecs::components::display::Display;
+use crate::ecs::components::{position::Position,display::Display};
 
 pub mod constants;
 
@@ -64,10 +63,15 @@ pub fn draw_world<W>(output: &mut W, level: &Level) ->  Result<()> where W: Writ
             let y_term_pos = y as u16 +y_offset;
             let element = level.map.get(y as usize,x as usize);
             match element {
-                Some(option_id) => {
-                    match option_id {
-                        Some(id) => {
-                            let display = level.display[*id as usize].unwrap();
+                Some(tile) => {
+                    match tile.current_ids.len() {
+                        0 =>  queue!(
+                                    output,
+                                    cursor::MoveTo(x_term_pos, y_term_pos),
+                                    style::Print(constants::EMPTY_ICON),
+                                    ),
+                        1 => {
+                            let display = level.display[tile.current_ids[0] as usize].unwrap();
                             queue!(
                                     output,
                                     cursor::MoveTo(x_term_pos, y_term_pos),
@@ -75,13 +79,14 @@ pub fn draw_world<W>(output: &mut W, level: &Level) ->  Result<()> where W: Writ
                                     )
 
                         },
-                        None =>  queue!(
+                        _ =>  queue!(
                                     output,
                                     cursor::MoveTo(x_term_pos, y_term_pos),
-                                    style::Print(constants::DEFAULT_ICON),
+                                    style::Print(constants::MULTIPLE_ICON),
                                     )
+
                     }
-                },
+                }
 
                 None => queue!(
                     output,

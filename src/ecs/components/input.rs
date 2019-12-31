@@ -2,7 +2,7 @@ use crate::model::commands::MoveCommand;
 
 #[derive(Copy, Clone)]
 pub struct Input {
-    pub keyboard_delegate: fn(&MoveCommand) -> (i16, i16)
+    pub keyboard_delegate: fn(&MoveCommand, i16) -> (i16, i16)
 }
 
 impl std::fmt::Debug for Input {

@@ -1,5 +1,5 @@
 #[derive(Debug, Clone)]
-pub struct DebugInformation {
+pub struct Debug {
     pub name: String
 }
 

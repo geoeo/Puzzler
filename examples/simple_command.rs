@@ -4,7 +4,7 @@ use puzzler::model::level::Level;
 use puzzler::ecs::components::position::Position;
 use puzzler::ecs::systems::commands::simple_command;
 use puzzler::ecs::components::display::Display;
-use puzzler::ecs::components::debug_information::DebugInformation;
+use puzzler::ecs::components::debug_information::Debug;
 use puzzler::ecs::components::input::Input;
 
 fn main() {
@@ -18,7 +18,7 @@ fn main() {
     let disp = Display {
         icon: 'c'
     };
-    let debug = DebugInformation {
+    let debug = Debug {
         name: String::from("debug_name")
     };
     let simple_input = Input {

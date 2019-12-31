@@ -1,13 +1,13 @@
 use crate::model::commands::MoveCommand;
 
 
-pub fn simple_command(move_command: &MoveCommand) -> (i16,i16) {
+pub fn simple_command(move_command: &MoveCommand, multiplier: i16) -> (i16,i16) {
     match move_command {
-        MoveCommand::Left => (-1,0),
-        MoveCommand::Right => (1,0),
-        MoveCommand::Up => (0,-1),
-        MoveCommand::Down=> (0,1),
-        MoveCommand::None => (0,0)
+        MoveCommand::Left => (-multiplier, 0),
+        MoveCommand::Right => (multiplier, 0),
+        MoveCommand::Up => (0, -multiplier),
+        MoveCommand::Down => (0, multiplier),
+        MoveCommand::None => (0, 0)
     }
 }
 

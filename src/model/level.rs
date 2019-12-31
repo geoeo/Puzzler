@@ -2,9 +2,10 @@ use crate::ecs::components::{
     display::Display,
     position::Position,
     occupancy::Occupancy,
-    input::Input};
+    input::Input,
+    tile::Tile};
 use array2d::Array2D;
-use crate::ecs::components::debug_information::DebugInformation;
+use crate::ecs::components::debug_information::Debug;
 
 const ENTITY_CAPACITY : usize = 50;
 
@@ -14,11 +15,11 @@ const ENTITY_CAPACITY : usize = 50;
 pub struct Level {
     pub width : u16,
     pub height: u16,
-    pub map: Array2D<Option<u64>>,
+    pub map: Array2D<Tile>,
     pub occupancies: Vec<Occupancy>,
     pub display: Vec<Option<Display>>,
     pub positions: Vec<Option<Position>>,
-    pub debug: Vec<Option<DebugInformation>>,
+    pub debug: Vec<Option<Debug>>,
     pub inputs: Vec<Option<Input>>
 }
 
@@ -29,7 +30,7 @@ impl Level {
             width: width,
             height: height,
             occupancies: vec![Occupancy::new(); ENTITY_CAPACITY],
-            map: Array2D::filled_with(None,height as usize,width as usize),
+            map: Array2D::filled_with(Tile::new(ENTITY_CAPACITY),height as usize,width as usize),
             display: vec![None; ENTITY_CAPACITY],
             positions: vec![None;ENTITY_CAPACITY],
             debug: vec![None;ENTITY_CAPACITY],
@@ -53,9 +54,14 @@ impl Level {
     pub fn clear_map(&mut self)->() {
         for x in 0..self.width {
             for y in 0..self.height {
-                self.map.set(y as usize, x as usize, None).unwrap_or_else(|e| {
-                    panic!("Clear map failed with error: {:?}", e);
-                })
+                match self.map.get_mut(y as usize, x as usize) {
+                    Some(tile) => {
+                        tile.clear_new();
+                        tile.clear_current();
+                    },
+                    None => println!("Clear map failed on tile (x: {:?},y: {:?})", x, y)
+                }
+
             }
         }
     }
@@ -63,9 +69,15 @@ impl Level {
     pub fn update_map(&mut self) -> () {
         for i in 0..self.positions.len() {
             match self.positions[i] {
-                Some(pos) => match self.map.set(pos.y_pos as usize, pos.x_pos as usize, Some(i as u64)) {
-                    Ok(_) => continue,
-                    Err(e) => println!("Update map failed on {:?}", e)
+                Some(pos) => match self.map.get_mut(pos.y_pos as usize, pos.x_pos as usize) {
+                    Some(tile) => {
+                        tile.clear_current();
+                        for j in 0..tile.new_ids.len() {
+                            tile.current_ids.push(tile.new_ids[j])
+                        }
+                        tile.clear_new();
+                    },
+                    None => println!("Update map failed on tile{:?}", pos)
                 },
                 None => continue
             }
@@ -73,7 +85,7 @@ impl Level {
     }
 
 
-    pub fn add_position(&mut self, display: Display, position: Position, debug: DebugInformation) -> bool {
+    pub fn add_position(&mut self, display: Display, position: Position, debug: Debug) -> bool {
         let available_id = self.available_id();
         match available_id {
             Some(id) => {
@@ -87,7 +99,7 @@ impl Level {
         }
     }
 
-    pub fn add_position_input(&mut self, display: Display, position: Position,input: Input, debug: DebugInformation) -> bool {
+    pub fn add_position_input(&mut self, display: Display, position: Position, input: Input, debug: Debug) -> bool {
         let available_id = self.available_id();
         match available_id {
             Some(id) => {
