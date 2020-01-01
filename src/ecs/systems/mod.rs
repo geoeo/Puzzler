@@ -1,3 +1,3 @@
 pub mod input;
-pub mod movable;
+pub mod movement;
 pub mod commands;

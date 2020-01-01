@@ -3,7 +3,8 @@ use crate::ecs::components::{
     position::Position,
     occupancy::Occupancy,
     input::Input,
-    tile::Tile};
+    tile::Tile,
+    physics::Physics};
 use array2d::Array2D;
 use crate::ecs::components::debug_information::Debug;
 
@@ -20,7 +21,8 @@ pub struct Level {
     pub display: Vec<Option<Display>>,
     pub positions: Vec<Option<Position>>,
     pub debug: Vec<Option<Debug>>,
-    pub inputs: Vec<Option<Input>>
+    pub inputs: Vec<Option<Input>>,
+    pub physics: Vec<Option<Physics>>
 }
 
 impl Level {
@@ -34,7 +36,8 @@ impl Level {
             display: vec![None; ENTITY_CAPACITY],
             positions: vec![None;ENTITY_CAPACITY],
             debug: vec![None;ENTITY_CAPACITY],
-            inputs: vec![None;ENTITY_CAPACITY]
+            inputs: vec![None;ENTITY_CAPACITY],
+            physics: vec![None;ENTITY_CAPACITY]
         }
 
     }
@@ -92,8 +95,17 @@ impl Level {
                 self.positions[id] = Some(position);
                 self.display[id] = Some(display);
                 self.debug[id] = Some(debug.clone());
-                self.occupancies[id] = Occupancy {position: true, display: true, input:false, debug: true};
-                true
+                self.occupancies[id] = Occupancy {position: true, display: true, input:false, debug: true, physics:false};
+                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+                    Some(tile) => {
+                        tile.new_ids.push(id as u64);
+                        true
+                    },
+                    None => {
+                        println!("Add position: Error when getting tile at pos {:?}", position);
+                        false
+                    }
+                }
             },
             None => false
         }
@@ -107,8 +119,42 @@ impl Level {
                 self.display[id] = Some(display);
                 self.debug[id] = Some(debug);
                 self.inputs[id] = Some(input);
-                self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true};
-                true
+                self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true, physics: false};
+                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+                    Some(tile) => {
+                        tile.new_ids.push(id as u64);
+                        true
+                    },
+                    None => {
+                        println!("Add position input: Error when getting tile at pos {:?}", position);
+                        false
+                    }
+                }
+            },
+            None => false
+        }
+    }
+
+    pub fn add_physics_position_input(&mut self, display: Display,physics: Physics, position: Position, input: Input, debug: Debug) -> bool {
+        let available_id = self.available_id();
+        match available_id {
+            Some(id) => {
+                self.positions[id] = Some(position);
+                self.display[id] = Some(display);
+                self.debug[id] = Some(debug);
+                self.inputs[id] = Some(input);
+                self.physics[id] = Some(physics);
+                self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true, physics:true};
+                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+                    Some(tile) => {
+                        tile.new_ids.push(id as u64);
+                        true
+                    },
+                    None => {
+                        println!("Add phyisics position input: Error when getting tile at pos {:?}", position);
+                        false
+                    }
+                }
             },
             None => false
         }
@@ -118,12 +164,26 @@ impl Level {
         match id {
             id if id > self.occupancies.capacity() => false,
             id => {
+                let position = self.positions[id].unwrap_or_else(|| {
+                    panic!("Delete: position not occipied at id {:?}", id)
+                });
                 self.positions[id] = None;
                 self.display[id] = None;
                 self.inputs[id] = None;
                 self.debug[id] = None;
+                self.physics[id] = None;
                 self.occupancies[id] = Occupancy::new();
-                true
+                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+                    Some(tile) => {
+                        tile.clear_current();
+                        tile.clear_new();
+                        true
+                    },
+                    None => {
+                        println!("Delete: Error when getting tile at pos {:?}", position);
+                        false
+                    }
+                }
             }
 
         }
