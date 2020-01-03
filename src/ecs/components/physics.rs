@@ -1,9 +1,8 @@
-use crate::model::commands::MoveCommand;
-use crate::ecs::components::position::Position;
+use crate::model::commands::Move;
 
 #[derive(Copy, Clone)]
 pub struct Physics {
-    pub move_delegate: fn(move_command: &MoveCommand, position: &Position) -> (MoveCommand)
+    pub move_delegate: fn(move_value: &Move) -> Move
 }
 
 impl std::fmt::Debug for Physics {

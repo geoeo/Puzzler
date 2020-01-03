@@ -1,7 +1,6 @@
-use crate::model::commands::MoveCommand;
+use crate::model::commands::{MoveCommand, Move};
 
-
-pub fn simple_command(move_command: &MoveCommand, multiplier: i16) -> (i16,i16) {
+pub fn simple_command(move_command: &MoveCommand, multiplier: i16) -> Move {
     match move_command {
         MoveCommand::Left => (-multiplier, 0),
         MoveCommand::Right => (multiplier, 0),
@@ -12,6 +11,6 @@ pub fn simple_command(move_command: &MoveCommand, multiplier: i16) -> (i16,i16) 
 }
 
 
-pub fn no_command(_: &MoveCommand) -> (i16,i16) {
+pub fn no_command(_: &MoveCommand) -> Move {
     (0,0)
 }

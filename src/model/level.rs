@@ -7,6 +7,7 @@ use crate::ecs::components::{
     physics::Physics};
 use array2d::Array2D;
 use crate::ecs::components::debug_information::Debug;
+use crate::model::commands::Move;
 
 const ENTITY_CAPACITY : usize = 50;
 
@@ -22,7 +23,8 @@ pub struct Level {
     pub positions: Vec<Option<Position>>,
     pub debug: Vec<Option<Debug>>,
     pub inputs: Vec<Option<Input>>,
-    pub physics: Vec<Option<Physics>>
+    pub physics: Vec<Option<Physics>>,
+    pub current_moves: Vec<Option<Move>> // This are the move values for the current frame; get cleared
 }
 
 impl Level {
@@ -37,7 +39,8 @@ impl Level {
             positions: vec![None;ENTITY_CAPACITY],
             debug: vec![None;ENTITY_CAPACITY],
             inputs: vec![None;ENTITY_CAPACITY],
-            physics: vec![None;ENTITY_CAPACITY]
+            physics: vec![None;ENTITY_CAPACITY],
+            current_moves: vec![None;ENTITY_CAPACITY]
         }
 
     }
@@ -54,7 +57,11 @@ impl Level {
         id_option
     }
 
-    pub fn clear_map(&mut self)->() {
+    pub fn clear(&mut self) ->() {
+        for i in 0..self.current_moves.len() {
+            self.current_moves[i] = None;
+        }
+
         for x in 0..self.width {
             for y in 0..self.height {
                 match self.map.get_mut(y as usize, x as usize) {
@@ -74,13 +81,9 @@ impl Level {
             match self.positions[i] {
                 Some(pos) => match self.map.get_mut(pos.y_pos as usize, pos.x_pos as usize) {
                     Some(tile) => {
-                        tile.clear_current();
-                        for j in 0..tile.new_ids.len() {
-                            tile.current_ids.push(tile.new_ids[j])
-                        }
-                        tile.clear_new();
+                        tile.current_ids.push(i as u64);
                     },
-                    None => println!("Update map failed on tile{:?}", pos)
+                    None => println!("Update map failed on tile {:?}", pos)
                 },
                 None => continue
             }
@@ -165,13 +168,14 @@ impl Level {
             id if id > self.occupancies.capacity() => false,
             id => {
                 let position = self.positions[id].unwrap_or_else(|| {
-                    panic!("Delete: position not occipied at id {:?}", id)
+                    panic!("Delete: position not occupied at id {:?}", id)
                 });
                 self.positions[id] = None;
                 self.display[id] = None;
                 self.inputs[id] = None;
                 self.debug[id] = None;
                 self.physics[id] = None;
+                self.current_moves[id] = None;
                 self.occupancies[id] = Occupancy::new();
                 match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
                     Some(tile) => {

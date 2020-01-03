@@ -14,7 +14,7 @@ use crossterm::{
     cursor,
 };
 use std::io::Write;
-use crate::ecs::systems::{movement::apply_move_on_all, input::{parse_input_event, keyboard_input}};
+use crate::ecs::systems::{movement::apply_input_move, input::{parse_input_event, keyboard_input}};
 
 pub mod view;
 pub mod model;
@@ -41,12 +41,12 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
 
         match poll(Duration::from_millis(1000)) {
             Ok(true) => {
-                level.clear_map();
+                level.clear();
                 let read = read()?;
                 let (game_state_new, input_command_new) = parse_input_event(&read);
                 game_state = game_state_new;
                 let move_command = keyboard_input::process_input(&input_command_new);
-                apply_move_on_all(&mut level.positions,&level.inputs, &mut level.map,level.width, level.height, &move_command, 1);
+                apply_input_move(&mut level.positions, &level.inputs, &mut level.current_moves, level.width, level.height, &move_command, 1);
 
                 level.update_map();
 
