@@ -66,7 +66,6 @@ impl Level {
             for y in 0..self.height {
                 match self.map.get_mut(y as usize, x as usize) {
                     Some(tile) => {
-                        tile.clear_new();
                         tile.clear_current();
                     },
                     None => println!("Clear map failed on tile (x: {:?},y: {:?})", x, y)
@@ -99,16 +98,17 @@ impl Level {
                 self.display[id] = Some(display);
                 self.debug[id] = Some(debug.clone());
                 self.occupancies[id] = Occupancy {position: true, display: true, input:false, debug: true, physics:false};
-                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
-                    Some(tile) => {
-                        tile.new_ids.push(id as u64);
-                        true
-                    },
-                    None => {
-                        println!("Add position: Error when getting tile at pos {:?}", position);
-                        false
-                    }
-                }
+                true
+//                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+//                    Some(tile) => {
+//                        tile.new_ids.push(id as u64);
+//                        true
+//                    },
+//                    None => {
+//                        println!("Add position: Error when getting tile at pos {:?}", position);
+//                        false
+//                    }
+//                }
             },
             None => false
         }
@@ -123,16 +123,17 @@ impl Level {
                 self.debug[id] = Some(debug);
                 self.inputs[id] = Some(input);
                 self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true, physics: false};
-                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
-                    Some(tile) => {
-                        tile.new_ids.push(id as u64);
-                        true
-                    },
-                    None => {
-                        println!("Add position input: Error when getting tile at pos {:?}", position);
-                        false
-                    }
-                }
+                true
+//                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+//                    Some(tile) => {
+//                        tile.new_ids.push(id as u64);
+//                        true
+//                    },
+//                    None => {
+//                        println!("Add position input: Error when getting tile at pos {:?}", position);
+//                        false
+//                    }
+//                }
             },
             None => false
         }
@@ -148,16 +149,17 @@ impl Level {
                 self.inputs[id] = Some(input);
                 self.physics[id] = Some(physics);
                 self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true, physics:true};
-                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
-                    Some(tile) => {
-                        tile.new_ids.push(id as u64);
-                        true
-                    },
-                    None => {
-                        println!("Add phyisics position input: Error when getting tile at pos {:?}", position);
-                        false
-                    }
-                }
+                true
+//                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+//                    Some(tile) => {
+//                        tile.new_ids.push(id as u64);
+//                        true
+//                    },
+//                    None => {
+//                        println!("Add phyisics position input: Error when getting tile at pos {:?}", position);
+//                        false
+//                    }
+//                }
             },
             None => false
         }
@@ -177,17 +179,18 @@ impl Level {
                 self.physics[id] = None;
                 self.current_moves[id] = None;
                 self.occupancies[id] = Occupancy::new();
-                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
-                    Some(tile) => {
-                        tile.clear_current();
-                        tile.clear_new();
-                        true
-                    },
-                    None => {
-                        println!("Delete: Error when getting tile at pos {:?}", position);
-                        false
-                    }
-                }
+                true
+//                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+//                    Some(tile) => {
+//                        tile.clear_current();
+//                        tile.clear_new();
+//                        true
+//                    },
+//                    None => {
+//                        println!("Delete: Error when getting tile at pos {:?}", position);
+//                        false
+//                    }
+//                }
             }
 
         }
