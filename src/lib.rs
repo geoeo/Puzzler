@@ -15,6 +15,7 @@ use crossterm::{
 };
 use std::io::Write;
 use crate::ecs::systems::{movement::apply_input_move, input::{parse_input_event, keyboard_input}};
+use crate::ecs::systems::movement::apply_physics;
 
 pub mod view;
 pub mod model;
@@ -47,6 +48,7 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
                 game_state = game_state_new;
                 let move_command = keyboard_input::process_input(&input_command_new);
                 apply_input_move(&mut level.positions, &level.inputs, &mut level.current_moves, level.width, level.height, &move_command, 1);
+                apply_physics(&mut level.physics, &mut level.positions, &mut level.current_moves, level.width, level.height);
 
                 level.update_map();
 
