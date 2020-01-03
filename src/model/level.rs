@@ -99,16 +99,6 @@ impl Level {
                 self.debug[id] = Some(debug.clone());
                 self.occupancies[id] = Occupancy {position: true, display: true, input:false, debug: true, physics:false};
                 true
-//                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
-//                    Some(tile) => {
-//                        tile.new_ids.push(id as u64);
-//                        true
-//                    },
-//                    None => {
-//                        println!("Add position: Error when getting tile at pos {:?}", position);
-//                        false
-//                    }
-//                }
             },
             None => false
         }
@@ -124,16 +114,6 @@ impl Level {
                 self.inputs[id] = Some(input);
                 self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true, physics: false};
                 true
-//                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
-//                    Some(tile) => {
-//                        tile.new_ids.push(id as u64);
-//                        true
-//                    },
-//                    None => {
-//                        println!("Add position input: Error when getting tile at pos {:?}", position);
-//                        false
-//                    }
-//                }
             },
             None => false
         }
@@ -150,16 +130,6 @@ impl Level {
                 self.physics[id] = Some(physics);
                 self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true, physics:true};
                 true
-//                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
-//                    Some(tile) => {
-//                        tile.new_ids.push(id as u64);
-//                        true
-//                    },
-//                    None => {
-//                        println!("Add phyisics position input: Error when getting tile at pos {:?}", position);
-//                        false
-//                    }
-//                }
             },
             None => false
         }
@@ -169,9 +139,6 @@ impl Level {
         match id {
             id if id > self.occupancies.capacity() => false,
             id => {
-                let position = self.positions[id].unwrap_or_else(|| {
-                    panic!("Delete: position not occupied at id {:?}", id)
-                });
                 self.positions[id] = None;
                 self.display[id] = None;
                 self.inputs[id] = None;
@@ -180,17 +147,6 @@ impl Level {
                 self.current_moves[id] = None;
                 self.occupancies[id] = Occupancy::new();
                 true
-//                match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
-//                    Some(tile) => {
-//                        tile.clear_current();
-//                        tile.clear_new();
-//                        true
-//                    },
-//                    None => {
-//                        println!("Delete: Error when getting tile at pos {:?}", position);
-//                        false
-//                    }
-//                }
             }
 
         }
