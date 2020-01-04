@@ -75,16 +75,44 @@ impl Level {
         }
     }
 
-    pub fn update_map(&mut self) -> () {
+    pub fn update_position_components(&mut self) -> () {
         for i in 0..self.positions.len() {
             match self.positions[i] {
-                Some(pos) => match self.map.get_mut(pos.y_pos as usize, pos.x_pos as usize) {
+                Some(position) => match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
                     Some(tile) => {
-                        tile.current_ids.push(i as u64);
+                        tile.current_ids.push(i);
                     },
-                    None => println!("Update map failed on tile {:?}", pos)
+                    None => println!("Update position components failed on tile {:?}", position)
                 },
                 None => continue
+            }
+        };
+    }
+
+    pub fn update_input_components(&mut self) -> () {
+        for i in 0..self.inputs.len() {
+            match (self.positions[i], self.inputs[i]) {
+                (Some(position), Some(_)) => match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+                    Some(tile) => {
+                        tile.current_ids.push(i);
+                    },
+                    None => println!("Update input components failed on tile {:?}", position)
+                },
+                _ => continue
+            }
+        };
+    }
+
+    pub fn update_no_input_components(&mut self) -> () {
+        for i in 0..self.positions.len() {
+            match (self.positions[i], self.inputs[i]) {
+                (Some(position), None) => match self.map.get_mut(position.y_pos as usize, position.x_pos as usize) {
+                    Some(tile) => {
+                        tile.current_ids.push(i);
+                    },
+                    None => println!("Update no input components failed on tile {:?}", position)
+                },
+                _ => continue
             }
         };
     }
@@ -113,6 +141,21 @@ impl Level {
                 self.debug[id] = Some(debug);
                 self.inputs[id] = Some(input);
                 self.occupancies[id] = Occupancy {position: true, display: true, input:true, debug: true, physics: false};
+                true
+            },
+            None => false
+        }
+    }
+
+    pub fn add_physics_position(&mut self, display: Display,physics: Physics, position: Position, debug: Debug) -> bool {
+        let available_id = self.available_id();
+        match available_id {
+            Some(id) => {
+                self.positions[id] = Some(position);
+                self.display[id] = Some(display);
+                self.debug[id] = Some(debug);
+                self.physics[id] = Some(physics);
+                self.occupancies[id] = Occupancy {position: true, display: true, input:false, debug: true, physics:true};
                 true
             },
             None => false

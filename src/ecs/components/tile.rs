@@ -1,6 +1,6 @@
 #[derive(Debug, Clone)]
 pub struct Tile {
-    pub current_ids: Vec<u64>,
+    pub current_ids: Vec<usize>,
 }
 
 impl Tile {

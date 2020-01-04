@@ -25,7 +25,7 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
 
     // encapsulate this better
     let (full,partial) = generate_boundaries(&level);
-    level.update_map();
+    level.update_position_components();
     let mut game_state = GameState::Running;
 
     execute!(output, terminal::EnterAlternateScreen)?;
@@ -43,15 +43,18 @@ pub fn run<W>(output: &mut W, level: &mut Level) -> Result<()> where W: Write{
         match poll(Duration::from_millis(1000)) {
             Ok(true) => {
                 level.clear();
+
                 let read = read()?;
                 let (game_state_new, input_command_new) = parse_input_event(&read);
                 game_state = game_state_new;
                 let move_command = keyboard_input::process_input(&input_command_new);
 
-                apply_input_move(&mut level.positions, &level.inputs, &mut level.current_moves, level.width, level.height, &move_command, 1);
-                apply_physics(&mut level.physics, &mut level.positions, &mut level.current_moves, level.width, level.height);
+                level.update_no_input_components();
 
-                level.update_map();
+                apply_input_move(&mut level.positions, &level.inputs, &mut level.current_moves, level.width, level.height, &move_command, 1);
+                apply_physics(&mut level.physics, &mut level.positions, &mut level.current_moves, &level.map, level.width, level.height);
+
+                level.update_input_components();
 
                 draw_boundary(output, level.height, &full, &partial)?;
                 draw_world(output, level)?;

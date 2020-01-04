@@ -1,5 +1,6 @@
 use crate::model::commands::{MoveCommand, Move};
 
+//TODO: think about traits
 pub fn simple_command(move_command: &MoveCommand, multiplier: i16) -> Move {
     match move_command {
         MoveCommand::Left => (-multiplier, 0),
@@ -10,7 +11,12 @@ pub fn simple_command(move_command: &MoveCommand, multiplier: i16) -> Move {
     }
 }
 
-
-pub fn no_command(_: &MoveCommand) -> Move {
+pub fn no_command(_: &MoveCommand, _: i16) -> Move {
     (0,0)
 }
+
+pub fn simple_move((delta_x, delta_y): Move, multiplier: i16)  -> Move {
+    (multiplier*delta_x,multiplier*delta_y)
+}
+
+pub fn no_move(_: Move, _: i16) -> Move {(0,0)}
