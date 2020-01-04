@@ -1,4 +1,4 @@
-use super::model::{level::Level};
+use crate::ecs::entities::level::Level;
 use super::model::commands::InputCommand;
 
 use crossterm::{queue, style, Result, cursor};

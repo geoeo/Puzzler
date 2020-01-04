@@ -1,6 +1,6 @@
 use puzzler::run;
 
-use puzzler::model::level::Level;
+use puzzler::ecs::entities::level::Level;
 
 fn main() {
     let mut stdout = std::io::stdout();

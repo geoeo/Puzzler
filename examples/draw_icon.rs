@@ -1,6 +1,6 @@
 use puzzler::run;
 
-use puzzler::model::level::Level;
+use puzzler::ecs::entities::level::Level;
 use puzzler::ecs::components::position::Position;
 use puzzler::ecs::components::display::Display;
 use puzzler::ecs::components::debug_information::Debug;
